@@ -1,0 +1,41 @@
+import express from "express";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import errorHandler from "./middlewere/ErrorHandel.ts";
+import AuthRoute from "./routes/AuthRoute.ts"
+import AiRoute from "./routes/AiRoutes.ts"
+import LeadsRoute from "./routes/LeadsRoute.ts"
+import InstaRoute from "./routes/instaRoute.ts"
+import todoRoute from "./routes/todoRoutes.ts"
+import path from "path"
+import cors from "cors"
+
+dotenv.config()
+
+const app = express();
+app.use(cors())
+app.use(express.json())
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/v1/auth",AuthRoute)
+
+app.use("/api/v1/ai",AiRoute)
+
+app.use("/api/v1/leads",LeadsRoute)
+app.use("/api/v1/insta",InstaRoute)
+app.use("/api/v1/todo",todoRoute)
+
+
+
+
+app.use(errorHandler);
+
+const PORT :number = Number(process.env.PORT) 
+mongoose.connect(process.env.DB_URL!).then(()=>{
+
+    app.listen(PORT,()=>{
+        console.log(`http://localhost:${PORT}`)
+    });
+})
+
+

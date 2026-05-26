@@ -1,0 +1,54 @@
+import { Document, model, Schema } from "mongoose";
+
+interface IEmp extends Document{
+name : string;
+email : string;
+password : string;
+profile : number;
+lastlogin:Date;
+active:Boolean;
+role: "emp" |"admin" |"agency"
+}
+
+
+
+const employSchema = new Schema<IEmp>({
+    name:{
+        type:String,
+        required:true,
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    password:{
+          type:String,
+        required:true,
+    },
+   profile:{
+    type:Number,
+   },
+   lastlogin:{
+    type:Date
+   },
+   active:{
+    type:Boolean,
+    default:true
+   },
+   role:{
+    type:String,
+    enum:["admin","emp","agency"],
+    default:"emp"
+   }
+},{
+    timestamps:true
+})
+
+
+
+const Emp =  model<IEmp>("employee",employSchema)
+
+export default Emp;
+
+
