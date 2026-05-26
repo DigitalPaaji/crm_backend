@@ -17,6 +17,12 @@ app.use(cors())
 app.use(express.json())
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(express.urlencoded({ extended: true }));
+
+
+app.get("/ping",(req,res)=>{
+    return res.send("pong crm")
+})
+
 app.use("/api/v1/auth",AuthRoute)
 
 app.use("/api/v1/ai",AiRoute)
