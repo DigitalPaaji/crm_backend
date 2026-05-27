@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import Lead from "../../model/leadsModels.ts";
+import Lead from "../../model/leadsModels";
 import { NetworkResources } from "node:inspector/promises";
 
 interface Authuser extends Request{

@@ -1,7 +1,7 @@
 import express from "express";
-import { createLead, deleteFollowup, DeleteLead, Followdup, getallLeads, getallLeadsAdmin, getLastFolowUps, getMyLeads, getSingleLead, tempDelete, updateLeads } from "../controller/AgencyController/LeadsController.ts";
-import { verifyAgency } from "../middlewere/AgencyMiddlewere.ts";
-import { verifyAdmin } from "../middlewere/AdminMiddlewere.ts";
+import { createLead, deleteFollowup, DeleteLead, Followdup, getallLeads, getallLeadsAdmin, getLastFolowUps, getMyLeads, getSingleLead, tempDelete, updateLeads } from "../controller/AgencyController/LeadsController";
+import { verifyAgency } from "../middlewere/AgencyMiddlewere";
+import { verifyAdmin } from "../middlewere/AdminMiddlewere";
 
 const route = express.Router();
 

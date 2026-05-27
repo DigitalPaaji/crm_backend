@@ -1,8 +1,8 @@
 import express from "express";
-import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, CreateInstaAcc, CreatePost, GetAllAccount, GetInstaPage, GetSinglePost, ReplytoComment, SearchLocation } from "../controller/Insta/createAccountController.ts";
-import { EmpAccountverify } from "../middlewere/empAccMiddlewere.ts";
-import { upload } from "../helper/multerUploads.ts";
-import { uploadVideo } from "../helper/multerUploadVideo.ts";
+import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, CreateInstaAcc, CreatePost, GetAllAccount, GetInstaPage, GetSinglePost, ReplytoComment, SearchLocation } from "../controller/Insta/createAccountController";
+import { EmpAccountverify } from "../middlewere/empAccMiddlewere";
+import { upload } from "../helper/multerUploads";
+import { uploadVideo } from "../helper/multerUploadVideo";
 
 const route = express.Router();
 

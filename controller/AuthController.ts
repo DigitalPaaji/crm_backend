@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import Emp from "../model/employModel.ts";
+import Emp from "../model/employModel";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken"
 

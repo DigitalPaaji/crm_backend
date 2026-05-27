@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
-import InstaUser from "../../model/instaModel.ts";
+import InstaUser from "../../model/instaModel";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
-import { uploadVideoToCloudinary } from "../../helper/uploadVideoToCloudinary.ts";
+import { uploadVideoToCloudinary } from "../../helper/uploadVideoToCloudinary";
 dotenv.config();
 
 interface AuthReq extends Request {

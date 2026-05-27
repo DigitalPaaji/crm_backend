@@ -1,5 +1,5 @@
 import express from "express";
-import { GetMessages, ReceiveInstagramWebhook, SendInstagramMessage, VerifyWebhook } from "../controller/Webhook/WebhookController.ts";
+import { GetMessages, ReceiveInstagramWebhook, SendInstagramMessage, VerifyWebhook } from "../controller/Webhook/WebhookController";
 const router = express.Router();
 
 

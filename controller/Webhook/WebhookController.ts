@@ -1,6 +1,6 @@
 import  type{ Request, Response } from "express";
-import InstagramMessage from "../../model/messagesModel.ts"
-import InstaUser from "../../model/instaModel.ts"
+import InstagramMessage from "../../model/messagesModel"
+import InstaUser from "../../model/instaModel"
 
 
 export const VerifyWebhook = (

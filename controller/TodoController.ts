@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { Todo } from "../model/todoModel.ts";
+import { Todo } from "../model/todoModel";
 
 
 

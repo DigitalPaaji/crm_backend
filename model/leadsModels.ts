@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 interface IFollowup {
   date: Date;
   by: Types.ObjectId;
-note:string
+note:string,
+  _id?: string
   
 }
 interface ILastFollowup {

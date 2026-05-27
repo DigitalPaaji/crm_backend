@@ -1,7 +1,7 @@
 import express from "express";
-import { CreateAdmin, createEmp, emplRemove, emplStatus, getAllEMp, getUser, LoginAdmin, LoginAgency, LoginEmp } from "../controller/AuthController.ts";
-import { VerifyAuth } from "../middlewere/getAuth.ts";
-import { verifyAdmin } from "../middlewere/AdminMiddlewere.ts";
+import { CreateAdmin, createEmp, emplRemove, emplStatus, getAllEMp, getUser, LoginAdmin, LoginAgency, LoginEmp } from "../controller/AuthController";
+import { VerifyAuth } from "../middlewere/getAuth";
+import { verifyAdmin } from "../middlewere/AdminMiddlewere";
 
 const route = express.Router();
 

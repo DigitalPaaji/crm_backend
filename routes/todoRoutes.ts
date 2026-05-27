@@ -1,6 +1,6 @@
 import express from "express";
-import { VerifyAuth } from "../middlewere/getAuth.ts";
-import { createTodo, DeleteTodo, getMyTodo, UpdateTodo } from "../controller/TodoController.ts";
+import { VerifyAuth } from "../middlewere/getAuth";
+import { createTodo, DeleteTodo, getMyTodo, UpdateTodo } from "../controller/TodoController";
 
 const routes = express.Router();
 

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import JWT from "jsonwebtoken"
-import Emp from "../model/employModel.ts";
+import Emp from "../model/employModel";
 
 export const EmpAccountverify= async(req: Request,res: Response,next: NextFunction)=>{
   try {
