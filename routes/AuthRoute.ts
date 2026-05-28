@@ -19,6 +19,6 @@ route.get("/emp/statusupdate/:id",verifyAdmin,emplStatus)
 route.get("/emp/delete/:id",verifyAdmin,emplRemove)
 
   
-
+ 
 
 export default route

@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import Emp from "../model/employModel";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken"
+import { sendWelcomeEmail } from "../helper/sendMail";
 
 
 export const CreateAdmin = async(req:Request,res:Response,next:NextFunction)=>{
@@ -232,7 +233,7 @@ await Emp.create({
      email,password:hashedPassword,name,role: role as "emp" | "agency"
     });
 
-
+ await sendWelcomeEmail(email,password)
 
    return res.status(201).json({
       success: true,
