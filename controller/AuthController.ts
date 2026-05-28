@@ -355,3 +355,86 @@ return res.json({success:true,user})
     next(error)
   }
 }
+
+
+export const EditProfile = async (
+  req: Auth,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { profile } = req.body;
+    const user = req.user;
+
+    const findUser = await Emp.findById(user._id);
+
+    if (!findUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    findUser.profile =Number(profile);
+
+    await findUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+export const changePassword = async(req:Auth,res:Response,next:NextFunction)=>{
+try {
+  const {currentPassword,newPassword}= req.body;
+  const user = req.user;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password and new password are required",
+      });
+    }
+    
+ const findUser = await Emp.findById(user._id).select("+password");
+
+    if (!findUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const compairPassword = await bcrypt.compare(currentPassword,findUser.password)
+
+
+  if(!compairPassword){
+    return res.status(400).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+  }
+
+   
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+findUser.password= hashedPassword;
+
+await findUser.save()
+   return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+} catch (error) {
+  next(error)
+}
+} 
+
+
+
+

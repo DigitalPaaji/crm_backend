@@ -1,5 +1,5 @@
 import express from "express";
-import { CreateAdmin, createEmp, emplRemove, emplStatus, getAllEMp, getUser, LoginAdmin, LoginAgency, LoginEmp } from "../controller/AuthController";
+import { changePassword, CreateAdmin, createEmp, EditProfile, emplRemove, emplStatus, getAllEMp, getUser, LoginAdmin, LoginAgency, LoginEmp } from "../controller/AuthController";
 import { VerifyAuth } from "../middlewere/getAuth";
 import { verifyAdmin } from "../middlewere/AdminMiddlewere";
 
@@ -18,6 +18,9 @@ route.get("/emp/getall",verifyAdmin,getAllEMp)
 route.get("/emp/statusupdate/:id",verifyAdmin,emplStatus)
 route.get("/emp/delete/:id",verifyAdmin,emplRemove)
 
+
+route.put("/user/updateprofile",VerifyAuth,EditProfile as any)
+route.put("/user/updatepassword",VerifyAuth,changePassword as any)
   
  
 
