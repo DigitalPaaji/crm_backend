@@ -1,6 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import Lead from "../../model/leadsModels";
-import { NetworkResources } from "node:inspector/promises";
+import XLSX from "xlsx"
+import fs from "fs";
+import path from "path";
+
+
 
 interface Authuser extends Request{
     user : any
@@ -530,6 +534,51 @@ try {
 
 }
 
+
+
+export const UploadXlFile= async(req: Authuser,res: Response,next: NextFunction)=>{
+  try {
+    const user = req.user
+  if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "File not uploaded",
+        });
+      }
+        const workbook = XLSX.readFile(req.file.path);
+   const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+ 
+  const data = XLSX.utils.sheet_to_json(sheet);
+
+  const formattedData = data.map((item: any) => ({
+  ...item,
+  createdby: user._id,
+}));
+
+await Lead.insertMany(formattedData);
+      
+const fullPath = path.join(process.cwd(),"uploads",req.file.filename)
+fs.unlinkSync(fullPath);
+
+
+
+      res.status(200).json({
+        success: true,
+        message: "Excel data uploaded successfully",
+      });
+
+
+
+  } catch (error) {
+    if(req.file){
+      const fullPath = path.join(process.cwd(),"uploads",req.file.filename)
+fs.unlinkSync(fullPath);
+    }
+    next(error)
+  }
+}
 
 
 

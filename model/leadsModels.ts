@@ -67,7 +67,7 @@ const LeadsSchema = new Schema<ILead>(
       type: String,
     
       trim: true,
-      match: [/^[6-9]\d{9}$/, "Invalid Indian phone number"],
+      // match: [/^[6-9]\d{9}$/, "Invalid Indian phone number"],
     },
 
     dob: { type: Date },

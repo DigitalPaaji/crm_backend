@@ -1,11 +1,13 @@
 import express from "express";
-import { createLead, deleteFollowup, DeleteLead, Followdup, getallLeads, getallLeadsAdmin, getLastFolowUps, getMyLeads, getSingleLead, tempDelete, updateLeads } from "../controller/AgencyController/LeadsController";
+import { createLead, deleteFollowup, DeleteLead, Followdup, getallLeads, getallLeadsAdmin, getLastFolowUps, getMyLeads, getSingleLead, tempDelete, updateLeads, UploadXlFile } from "../controller/AgencyController/LeadsController";
 import { verifyAgency } from "../middlewere/AgencyMiddlewere";
 import { verifyAdmin } from "../middlewere/AdminMiddlewere";
+import uploadxl from "../helper/MulterUploadxl";
 
 const route = express.Router();
 
 route.post("/create",verifyAgency,createLead as any)
+route.post("/create/xl",verifyAgency,uploadxl.single("file"),UploadXlFile as any)
 route.get("/get-all-leads",verifyAgency,getallLeads as any)
 route.get("/get-my-leads",verifyAgency,getMyLeads as any)
 route.get("/get-leads-by-date",verifyAgency,getLastFolowUps as any)

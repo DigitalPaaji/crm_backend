@@ -3,15 +3,13 @@ import mongoose from "mongoose";
 const messageSchema = new mongoose.Schema(
   {
     senderId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+ref:"employee"
     },
-    recipientId: {
-      type: String,
-    },
-    messageId: {
-      type: String,
-      unique: true,
+   
+    chatId: {
+      type: mongoose.Schema.Types.ObjectId,
+     ref:"chat"
     },
     text: {
       type: String,
@@ -22,5 +20,8 @@ const messageSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+   const Message =   mongoose.model("Message", messageSchema);
 
-export default mongoose.model("InstagramMessage", messageSchema);
+   export default  Message;
+
+

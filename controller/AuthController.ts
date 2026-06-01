@@ -410,7 +410,7 @@ try {
       });
     }
 
-    const compairPassword = await bcrypt.compare(currentPassword,findUser.password)
+      const compairPassword = await bcrypt.compare(currentPassword,findUser.password)
 
 
   if(!compairPassword){
