@@ -11,6 +11,7 @@ import LeadsRoute from "./routes/LeadsRoute"
 import InstaRoute from "./routes/instaRoute"
 import todoRoute from "./routes/todoRoutes"
 import chatRoute from "./routes/chatRoute"
+import meetRoute from "./routes/meetingRoutes"
 
 
 
@@ -40,6 +41,7 @@ app.use("/api/v1/insta",InstaRoute)
 app.use("/api/v1/todo",todoRoute)
 
 app.use("/api/v1/chat",chatRoute)
+app.use("/api/v1/meet",meetRoute)
 
 
 
@@ -87,34 +89,60 @@ mongoose.connect(process.env.DB_URL!).then(()=>{
 
 
 io.on("connection",(socket)=>{
-  console.log("Connected:", socket.id);
 
     socket.on("join-chat", (chatId) => {
     socket.join(chatId);
-      console.log(`${socket.id} joined ${chatId}`);
+     
+  });
+
+
+   socket.on("join-room", (roomId,name) => {
+    socket.join(roomId);
+    console.log(`User ${socket.id} joined room ${roomId}`);
+    
+    // Tell everyone else in the room that a new user joined
+    socket.to(roomId).emit("user-joined", socket.id,name);
   });
   
+
+   socket.on("offer", ({ roomId, offer }) => {
+    socket.to(roomId).emit("offer", offer);
+  });
+
+  socket.on("answer", ({ roomId, answer }) => {
+    socket.to(roomId).emit("answer", answer);
+  });
+
+  socket.on("ice-candidate", ({ roomId, candidate }) => {
+    socket.to(roomId).emit("ice-candidate", candidate);
+  });
+
+
+
   socket.on("typing", (chatId) => {
     socket.to(chatId).emit("true-typing");
   });
 
 
   socket.on("send-message",({chatId,message})=>{
-console.log("Sending to room:", chatId);
       socket.to(chatId).emit("receive-message", message);
   })
    socket.on("stop-typing", (chatId) => {
     socket.to(chatId).emit("false-typing");
   });
   
-// io.to(chatId).emit("receive-message", message);
+   
+
+
+
+
 
 
 socket.on("leave-chat", (chatId) => {
   socket.leave(chatId);
 });
  socket.on("disconnect", () => {
-    console.log("User disconnected");
+
   });
 })
 

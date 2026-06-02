@@ -35,7 +35,7 @@ const  {name,email,phone,dob,mother,father,address,designation,education,source,
 }
 }
 
-
+ 
 export const getallLeads=async(req:Authuser,res:Response,next:NextFunction)=>{
 try {
     const user = req.user;
