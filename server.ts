@@ -96,12 +96,16 @@ io.on("connection",(socket)=>{
   });
 
 
-   socket.on("join-room", (roomId,name) => {
-    socket.join(roomId);
-    console.log(`User ${socket.id} joined room ${roomId}`);
-    
+   socket.on("join-room", (roomid,name) => {
+    socket.join(roomid);
+     const room =
+    io.sockets.adapter.rooms.get(roomid);
+
+
+      const roomsize= room ? room.size : 0
+  
     // Tell everyone else in the room that a new user joined
-    socket.to(roomId).emit("user-joined", socket.id,name);
+    socket.to(roomid).emit("user-joined", socket.id,name,roomsize);
   });
   
 
