@@ -103,7 +103,7 @@ io.on("connection",(socket)=>{
 
 
       const roomsize= room ? room.size : 0
-  
+  console.log("roomjoin" , roomsize)
     // Tell everyone else in the room that a new user joined
     socket.to(roomid).emit("user-joined", socket.id,name,roomsize);
   });
