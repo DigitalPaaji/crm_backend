@@ -67,62 +67,76 @@ mongoose.connect(process.env.DB_URL!).then(()=>{
 })
 
 
-//  const initializeSocket = (io: Server) => {
-//   io.on("connection", (socket) => {
-//     console.log("User Connected:", socket.id);
-
-//     socket.on("join-chat", (chatId: string) => {
-//       socket.join(chatId);
-      
-//     });
-
-//     socket.on("disconnect", () => {
-//       console.log("Disconnected:", socket.id);
-//     });
-//   });
-// };
-
-
-
-// initializeSocket(io);
-
-
+const rooms = {} as any;
 
 io.on("connection",(socket)=>{
 
-    socket.on("join-chat", (chatId) => {
-    socket.join(chatId);
-     
-  });
+  
 
 
-   socket.on("join-room", (roomid,name) => {
-    socket.join(roomid);
-     const room =
-    io.sockets.adapter.rooms.get(roomid);
+   socket.on("join-room", ({ roomId, name }) => {
+   socket.join(roomId);
+rooms[socket.id] = { roomId, name, isVideoOff: false, isAudioMuted: false };
+const clientsInRoom = io.sockets.adapter.rooms.get(roomId);
+const existingUsers = [] as any;
+if (clientsInRoom) {
+      clientsInRoom.forEach((clientId) => {
+        if (clientId !== socket.id) {
+          existingUsers.push({
+            id: clientId,
+            name: rooms[clientId].name,
+          });
+        }
+      });
+    }
+   
 
+socket.emit("existing-users", existingUsers);
 
-      const roomsize= room ? room.size : 0
-  console.log("roomjoin" , roomsize)
-    // Tell everyone else in the room that a new user joined
-    socket.to(roomid).emit("user-joined", socket.id,name,roomsize);
+socket.to(roomId).emit("user-joined", {
+      callerId: socket.id,
+      name: name,
+    });
   });
   
 
-   socket.on("offer", ({ roomId, offer }) => {
-    socket.to(roomId).emit("offer", offer);
+   socket.on("offer", (payload) => {
+  io.to(payload.target).emit("offer", payload);
   });
 
-  socket.on("answer", ({ roomId, answer }) => {
-    socket.to(roomId).emit("answer", answer);
+   socket.on("answer", (payload) => {
+   io.to(payload.target).emit("answer", payload);
   });
 
-  socket.on("ice-candidate", ({ roomId, candidate }) => {
-    socket.to(roomId).emit("ice-candidate", candidate);
+   socket.on("ice-candidate", (payload) => {
+    io.to(payload.target).emit("ice-candidate", payload);
+  });
+
+
+  socket.on("media-state-change", (payload) => {
+    if (rooms[socket.id]) {
+      rooms[socket.id].isVideoOff = payload.isVideoOff;
+      rooms[socket.id].isAudioMuted = payload.isAudioMuted;
+      socket.to(payload.roomId).emit("peer-media-state-change", {
+        id: socket.id,
+        isVideoOff: payload.isVideoOff,
+        isAudioMuted: payload.isAudioMuted,
+      });
+    }
   });
 
 
 
+
+
+
+
+
+
+  socket.on("join-chat", (chatId) => {
+    socket.join(chatId);
+     
+  });
   socket.on("typing", (chatId) => {
     socket.to(chatId).emit("true-typing");
   });
@@ -146,6 +160,12 @@ socket.on("leave-chat", (chatId) => {
   socket.leave(chatId);
 });
  socket.on("disconnect", () => {
+const user = rooms[socket.id];
+    if (user) {
+      // Notify others in the room
+      socket.to(user.roomId).emit("user-disconnected", socket.id);
+      delete rooms[socket.id];
+    }
 
   });
 })
