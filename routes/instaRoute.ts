@@ -3,7 +3,7 @@ import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, Cr
 import { EmpAccountverify } from "../middlewere/empAccMiddlewere";
 import { upload } from "../helper/multerUploads";
 import { uploadVideo } from "../helper/multerUploadVideo";
-import { challenge } from "../controller/Webhook/messageWebhook";
+import { challenge, PostWebhook } from "../controller/Webhook/messageWebhook";
 
 const route = express.Router();
 
@@ -31,7 +31,8 @@ route.post("/reply/comment",EmpAccountverify,ReplytoComment as any)
 
 
 
-route.get("/webhook",EmpAccountverify,challenge)
+route.get("/webhook",challenge)
+route.post("/webhook",PostWebhook)
 
 
 
