@@ -22,4 +22,13 @@ route.get("/admin/get-all-leads",verifyAdmin,getallLeadsAdmin as any)
 route.get("/admin/get-lead/:leadid",verifyAdmin,getSingleLead as any)
 route.put("/admin/update-lead/:id",verifyAdmin,updateLeads as any)
 route.delete("/admin/delete/:id",verifyAdmin,DeleteLead as any)
+
+
+
+//webhook
+
+
+
+
+
 export default route 

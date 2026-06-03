@@ -7,6 +7,8 @@ interface AuthReq extends Request{
     user :any
 }
 
+
+
  export const createMeeting = async(req:AuthReq,res:Response,next:NextFunction)=>{
 try {
     const { password } = req.body;
@@ -40,9 +42,6 @@ try {
 }
 }
 
-
-
-
 export const joinMeeting = async (req: Request,  res: Response,next: NextFunction) => {
   try {
     const { roomid, password } = req.body;
@@ -72,6 +71,7 @@ export const joinMeeting = async (req: Request,  res: Response,next: NextFunctio
     next(error);
   }
 };
+
 
 export const GetMeeting = async (req: AuthReq,  res: Response,next: NextFunction)=>{
   try {
@@ -125,3 +125,8 @@ export const deleteChatRoomid = async (
     next(error);
   }
 };
+
+
+
+
+

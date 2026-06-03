@@ -3,6 +3,7 @@ import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, Cr
 import { EmpAccountverify } from "../middlewere/empAccMiddlewere";
 import { upload } from "../helper/multerUploads";
 import { uploadVideo } from "../helper/multerUploadVideo";
+import { challenge } from "../controller/Webhook/messageWebhook";
 
 const route = express.Router();
 
@@ -28,6 +29,9 @@ route.post("/create_story/video",EmpAccountverify,uploadVideo.single("video"),Cr
 route.post("/create_carousel/",EmpAccountverify,upload.array("media", 10),Create_Story_Post_Video as any)
 route.post("/reply/comment",EmpAccountverify,ReplytoComment as any)
 
+
+
+route.get("/webhook",EmpAccountverify,challenge)
 
 
 
