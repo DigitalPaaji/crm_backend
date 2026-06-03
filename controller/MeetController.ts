@@ -91,3 +91,37 @@ meets
     next(error)
   }
 }
+
+
+
+export const deleteChatRoomid = async (
+  req: AuthReq,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+
+    const chatRoom = await Meeting.findOne({
+      _id: id,
+      createby: user._id,
+    });
+
+    if (!chatRoom) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat room not found",
+      });
+    }
+
+    await chatRoom.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Chat room deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
