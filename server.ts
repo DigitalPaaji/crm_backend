@@ -12,11 +12,13 @@ import InstaRoute from "./routes/instaRoute"
 import todoRoute from "./routes/todoRoutes"
 import chatRoute from "./routes/chatRoute"
 import meetRoute from "./routes/meetingRoutes"
+import ShearRoute from "./routes/ShearRoutes"
 
 
 
 import path from "path"
 import cors from "cors"
+import { watchVideo } from "./controller/ShearController";
 // import { initializeSocket } from "./helper/scoket";
 
 dotenv.config()
@@ -32,6 +34,7 @@ app.get("/ping",(req,res)=>{
     return res.send("pong crm")
 })
 
+app.get("/uploads/video/:filename",watchVideo)
 app.use("/api/v1/auth",AuthRoute)
 
 app.use("/api/v1/ai",AiRoute)
@@ -42,7 +45,7 @@ app.use("/api/v1/todo",todoRoute)
 
 app.use("/api/v1/chat",chatRoute)
 app.use("/api/v1/meet",meetRoute)
-
+app.use("/api/v1/shear",ShearRoute)
 
 
 app.use(errorHandler);

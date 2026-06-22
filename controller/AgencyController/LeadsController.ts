@@ -49,7 +49,7 @@ try {
 
   const leads = await Lead.find({notdeleted:true})
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name email phone dob status source createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status source createdby").populate("createdby");
 
    return res.status(200).json({
       success: true,
@@ -78,7 +78,7 @@ try {
 
   const leads = await Lead.find({createdby:user._id,notdeleted:true})
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name email phone dob status source createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status source createdby").populate("createdby");
 
    return res.status(200).json({
       success: true,
@@ -221,12 +221,12 @@ if (lead.followup.length) {
   }
 }
 
-lead.followup.push({
-  date,
-  by:user._id,
-  note,
+// lead.followup.push({
+//   date,
+//   by:user._id,
+//   note,
 
-})
+// })
 
 const latestFollowup = lead.followup[lead.followup.length - 1];
 
@@ -236,7 +236,7 @@ lead.lastFollowup = {
 };
 
 
-   await lead.save();
+
 
 
 

@@ -44,6 +44,8 @@ export const EmpAccountverify= async(req: Request,res: Response,next: NextFuncti
 
 
 } catch (error) {
+console.log(error)
+
       return res.status(401).json({
       success: false,
       message: "Unauthorized or token expired",

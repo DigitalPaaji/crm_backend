@@ -436,5 +436,46 @@ await findUser.save()
 } 
 
 
+export const accessChange = async(req:Auth,res:Response,next:NextFunction) =>{
+  try {
+    const {id ,access} = req.body;
+
+    
+   if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID is required",
+      });
+    }
+    
+
+    const user = await Emp.findByIdAndUpdate(
+      id,
+      { access },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+     
+
+      return res.status(200).json({
+      success: true,
+      message: "Access updated successfully",
+     
+    });
+    
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+
 
 

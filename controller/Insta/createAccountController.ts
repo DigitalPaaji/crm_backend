@@ -1036,7 +1036,7 @@ export const GetSinglePost = async (
 };
 
 
-export const ReplytoComment= async( req: AuthReq,res: Response,next: NextFunction,)=>{
+export const ReplytoComment= async( req: AuthReq,res: Response,next: NextFunction)=>{
     try {
       
 const {accountId, commentId,message }=req.body 
@@ -1078,3 +1078,45 @@ const {accountId, commentId,message }=req.body
       next(error)
     }
   }
+
+
+
+
+export const DeleteAccount = async (
+  req: AuthReq,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const accId = req.params.id;
+    const user = req.user;
+
+    const instauser = await InstaUser.findById(accId);
+
+    if (!instauser) {
+      return res.status(404).json({
+        success: false,
+        message: "Account not found",
+      });
+    }
+
+    // if (instauser.createdBy.toString() !== user._id.toString()) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Unauthorized",
+    //   });
+    // }
+
+    await instauser.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+

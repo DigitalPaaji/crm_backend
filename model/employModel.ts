@@ -7,6 +7,7 @@ password : string;
 profile : number;
 lastlogin:Date;
 active:Boolean;
+access: string[];
 role: "emp" |"admin" |"agency"
 }
 
@@ -36,6 +37,10 @@ const employSchema = new Schema<IEmp>({
     type:Boolean,
     default:true
    },
+
+ access:[String],
+
+
    role:{
     type:String,
     enum:["admin","emp","agency"],

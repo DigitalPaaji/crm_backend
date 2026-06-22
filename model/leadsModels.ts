@@ -3,14 +3,26 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 interface IFollowup {
   date: Date;
   by: Types.ObjectId;
-note:string,
-  _id?: string
-  
+  note:string,
+  _id?: string,
+  status: "new" | "contacted" | "interested" | "converted" | "rejected";
 }
 interface ILastFollowup {
   date?: Date;
   followupid?: String | "";
 }
+interface INextFollowup {
+  date?: Date;
+  followupid?: String | "";
+  note:string,
+  status:"new" | "contacted" | "interested" | "converted" | "rejected"
+
+}
+
+
+
+
+
 export interface ILead extends Document {
   name?: string;
   email?: string;
@@ -31,7 +43,9 @@ export interface ILead extends Document {
   notdeleted:Boolean;
   createdAt: Date;
   updatedAt: Date;
-  lastFollowup:ILastFollowup
+  lastFollowup:ILastFollowup;
+  nextFollowup:INextFollowup;
+   
 }
 
 
@@ -43,6 +57,11 @@ const FollowupSchema = new Schema<IFollowup>(
     by: { type: Schema.Types.ObjectId, ref: "employee", required: true },
     note:{
       type:String,
+    },
+     status:{
+      type: String,
+      enum: ["new", "contacted", "interested", "converted", "rejected"],
+      default: "new",
     }
   },
   {
@@ -104,15 +123,26 @@ const LeadsSchema = new Schema<ILead>(
       default :""
     }
    },
+nextFollowup:{
+  date:{ type: Date },
+    followupid:{
+      type:String,
+      default :""
+    },
+  note: { type: String, maxlength: 1000 },
+  status:{
+      type: String,
+      enum: ["new", "contacted", "interested", "converted", "rejected"],
+      default: "new",
+    },
 
+  },
 
     notes: { type: String, maxlength: 1000 },
-    createdby:{
-   type: Schema.Types.ObjectId, ref: "employee", required: true
-    },
+    createdby:{ type: Schema.Types.ObjectId, ref: "employee", required: true },
 notdeleted:{
     type:Boolean,
-default:true
+    default:true
 }
 
   },

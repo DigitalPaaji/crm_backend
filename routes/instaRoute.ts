@@ -1,5 +1,5 @@
 import express from "express";
-import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, CreateInstaAcc, CreatePost, GetAllAccount, GetInstaPage, GetSinglePost, ReplytoComment, SearchLocation } from "../controller/Insta/createAccountController";
+import { Create_Story_Post_Image, Create_Story_Post_Video, Create_Video_Post, CreateInstaAcc, CreatePost, DeleteAccount, GetAllAccount, GetInstaPage, GetSinglePost, ReplytoComment, SearchLocation } from "../controller/Insta/createAccountController";
 import { EmpAccountverify } from "../middlewere/empAccMiddlewere";
 import { upload } from "../helper/multerUploads";
 import { uploadVideo } from "../helper/multerUploadVideo";
@@ -28,7 +28,7 @@ route.post("/create_story/video",EmpAccountverify,uploadVideo.single("video"),Cr
 
 route.post("/create_carousel/",EmpAccountverify,upload.array("media", 10),Create_Story_Post_Video as any)
 route.post("/reply/comment",EmpAccountverify,ReplytoComment as any)
-
+route.delete("/delete/:id",EmpAccountverify,DeleteAccount as any )
 
 
 route.get("/webhook",challenge)
