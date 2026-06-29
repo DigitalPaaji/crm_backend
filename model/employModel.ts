@@ -43,7 +43,7 @@ const employSchema = new Schema<IEmp>({
 
    role:{
     type:String,
-    enum:["admin","emp","agency"],
+    enum:["admin","emp","agency","client"],
     default:"emp"
    }
 },{

@@ -475,6 +475,7 @@ export const getLastFolowUps = async (
   next: NextFunction
 ) => {
   try {
+    const user = req.user
     const page = Number(req.query.page) || 1;
     const followupdata = Number(req.query.followupdata) || 3;
 
@@ -485,11 +486,12 @@ export const getLastFolowUps = async (
     filterDate.setDate(filterDate.getDate() - followupdata);
 
     const query = {
+       createdby: user._id,
       "lastFollowup.date": {
         $lte: filterDate,
       },
     };
-
+// query.createdby = user._id
 // filterDate.setMinutes(filterDate.getMinutes() - followupdata);
 
 // const query = {
