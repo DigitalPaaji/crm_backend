@@ -32,7 +32,7 @@ try {
     return res.status(201).json({
       success: true,
       room,
-      meetingLink: `${process.env.FRONTEND_URL}/meet/${roomid}`,
+      meetingLink: `${process.env.FRONTEND_URL?.split(",")[0]}/meet/${roomid}`,
     });
 
 

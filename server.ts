@@ -13,6 +13,7 @@ import todoRoute from "./routes/todoRoutes"
 import chatRoute from "./routes/chatRoute"
 import meetRoute from "./routes/meetingRoutes"
 import ShearRoute from "./routes/ShearRoutes"
+import OnBoarding from "./routes/onBoarding"
 
 
 
@@ -47,8 +48,12 @@ app.use("/api/v1/chat",chatRoute)
 app.use("/api/v1/meet",meetRoute)
 app.use("/api/v1/shear",ShearRoute)
 
+   
 
-app.use(errorHandler);
+app.use("/api/v1/onboarding",OnBoarding)
+
+
+app.use(errorHandler); 
 const io = new Server(server, {
   cors: {
     origin: "*",
