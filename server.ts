@@ -14,12 +14,15 @@ import chatRoute from "./routes/chatRoute"
 import meetRoute from "./routes/meetingRoutes"
 import ShearRoute from "./routes/ShearRoutes"
 import OnBoarding from "./routes/onBoarding"
-
+import ClientsRoute from "./routes/Client/AuthRoute"
 
 
 import path from "path"
 import cors from "cors"
 import { watchVideo } from "./controller/ShearController";
+
+
+
 // import { initializeSocket } from "./helper/scoket";
 
 dotenv.config()
@@ -51,6 +54,7 @@ app.use("/api/v1/shear",ShearRoute)
    
 
 app.use("/api/v1/onboarding",OnBoarding)
+app.use("/api/v1/client",ClientsRoute)
 
 
 app.use(errorHandler); 
