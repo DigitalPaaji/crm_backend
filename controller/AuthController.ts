@@ -5,7 +5,7 @@ import JWT from "jsonwebtoken"
 import { sendWelcomeEmail } from "../helper/sendMail";
 
 
-export const CreateAdmin = async(req:Request,res:Response,next:NextFunction)=>{
+export const  CreateAdmin = async(req:Request,res:Response,next:NextFunction)=>{
 try {
     const {email,password,name} = req.body
 

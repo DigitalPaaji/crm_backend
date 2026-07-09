@@ -18,6 +18,15 @@ const user = req.user
 
 const  {name,email,phone,dob,mother,father,address,designation,education,source,notes} = req.body
 
+const allReadyLead = await Lead.findOne({name,email,phone})
+
+if(allReadyLead){
+  return res.json(301).json({
+    success:false,
+    message:"lead Allready exist"
+  })
+}
+
  await Lead.create({name,email,phone,dob,mother,father,address,designation,education,source,notes,createdby:user._id})
 
 
