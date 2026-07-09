@@ -23,6 +23,8 @@ import { watchVideo } from "./controller/ShearController";
 
 
 
+console.log("yes")
+
 // import { initializeSocket } from "./helper/scoket";
 
 dotenv.config()
