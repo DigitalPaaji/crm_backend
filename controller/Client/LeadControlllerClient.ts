@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import ClientReqLead from "../../model/ClientRequirments";
+import ClientLead from "../../model/ClientLeadModel";
 
 const allowedLeadFields = [
   "name",
@@ -196,3 +197,105 @@ export const getClientLeadVisibleFields = async (
     next(error);
   }
 };
+
+type allowedLeadFields = (typeof allowedLeadFields)[number];
+
+
+const isEmptyValue = (value: unknown): boolean => {
+  if (value === undefined || value === null) return true;
+
+  if (typeof value === "string" && value.trim() === "") {
+    return true;
+  }
+
+  if (Array.isArray(value) && value.length === 0) {
+    return true;
+  }
+
+  return false;
+};
+
+
+
+
+
+
+export const createLead= async(  req: IAuth,
+  res: Response,
+  next: NextFunction)=>{
+  try {
+       const user = req.user
+
+         if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+const clientId = user._id;
+
+
+    const leadConfiguration = await ClientReqLead.findOne({
+      client: clientId,
+      active: true,
+    }).lean();
+
+ if (!leadConfiguration) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead form configuration not found",
+      });
+    }
+
+
+    const leadData: Partial<Record<allowedLeadFields, unknown>> = {};
+    const missingFields: allowedLeadFields[] = [];
+
+
+  for (const fieldKey of allowedLeadFields) {
+      const fieldConfiguration = leadConfiguration[fieldKey];
+
+      if (!fieldConfiguration?.show) {
+        continue;
+      }
+
+      const value = req.body[fieldKey];
+
+      if (fieldConfiguration.required && isEmptyValue(value)) {
+        missingFields.push(fieldKey);
+        continue;
+      }
+
+      if (!isEmptyValue(value)) {
+        leadData[fieldKey] =
+          typeof value === "string" ? value.trim() : value;
+      }
+    }
+ if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide all required lead fields",
+        missingFields,
+      });
+    }
+
+
+ const lead = await ClientLead.create({
+      ...leadData,
+      client: clientId,
+      createdBy: user._id,
+      status: "new",
+      active: true,
+    });
+
+
+     return res.status(201).json({
+      success: true,
+      message: "Lead created successfully",
+      lead,
+    });
+
+  } catch (error) {
+    next(error)
+  }
+}
