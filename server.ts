@@ -15,6 +15,7 @@ import meetRoute from "./routes/meetingRoutes"
 import ShearRoute from "./routes/ShearRoutes"
 import OnBoarding from "./routes/onBoarding"
 import ClientsRoute from "./routes/Client/AuthRoute"
+import LeadsRouteClient from "./routes/Client/clientLeadsRoutes"
 
 
 import path from "path"
@@ -23,7 +24,7 @@ import { watchVideo } from "./controller/ShearController";
 
 
 
-console.log("yes")
+
 
 // import { initializeSocket } from "./helper/scoket";
 
@@ -56,7 +57,10 @@ app.use("/api/v1/shear",ShearRoute)
    
 
 app.use("/api/v1/onboarding",OnBoarding)
+
+///client////
 app.use("/api/v1/client",ClientsRoute)
+app.use("/api/v1/leadclient",LeadsRouteClient)
 
 
 app.use(errorHandler); 
