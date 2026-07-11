@@ -1,6 +1,6 @@
 import express from "express";
 import { Clientverify } from "../../middlewere/ClientMiddlewere";
-import { createLead, createOrUpdateClientReqLead, getClientLeadVisibleFields, getReq } from "../../controller/Client/LeadControlllerClient";
+import { createLead, createOrUpdateClientReqLead, getClientLeadVisibleFields, getLeads, getMyLead, getReq } from "../../controller/Client/LeadControlllerClient";
 
 const route = express.Router();
 
@@ -9,5 +9,13 @@ route.get("/get/requ",Clientverify,getReq as any)
 route.get("/get/allow",Clientverify,getClientLeadVisibleFields as any)
 
 route.post("/lead/create",Clientverify,createLead as any)
+
+route.get("/lead/get",Clientverify,getLeads as any)
+route.get("/lead/get/:leadid",Clientverify,getMyLead as any)
+
+
+
+
+
 
 export default route

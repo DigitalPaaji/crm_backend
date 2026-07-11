@@ -299,3 +299,119 @@ const clientId = user._id;
     next(error)
   }
 }
+
+export const getLeads = async(req:IAuth,res:Response,next:NextFunction)=>{
+  try {
+     const { sort  } = req.query;
+    const user = req.user
+    
+     const query: any = {
+      client: user._id,
+    };
+    const now = new Date();
+
+
+   if (sort === "today") {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  query.createdAt = {
+    $gte: startOfDay,
+    $lte: endOfDay,
+  };
+}
+     if (sort === "week") {
+      const startOfWeek = new Date();
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      const endOfWeek = new Date();
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
+      query.createdAt = {
+        $gte: startOfWeek,
+        $lte: endOfWeek,
+      };
+     }
+
+       if (sort === "month") {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      endOfMonth.setHours(23, 59, 59, 999);
+
+      query.createdAt = {
+        $gte: startOfMonth,
+        $lte: endOfMonth,
+      };
+    }
+      if (sort === "year") {
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      startOfYear.setHours(0, 0, 0, 0);
+
+      const endOfYear = new Date(now.getFullYear(), 11, 31);
+      endOfYear.setHours(23, 59, 59, 999);
+
+      query.createdAt = {
+        $gte: startOfYear,
+        $lte: endOfYear,
+      };
+    }
+
+
+ const leads = await ClientLead.find(query).sort({ createdAt: -1 });
+
+   return res.status(200).json({
+      success: true,
+      message: "Leads fetched successfully",
+      // sort,
+      count: leads.length,
+      leads,
+    });
+
+
+  } catch (error) {
+     next(error);
+  }
+}
+export const getMyLead = async(req:IAuth,res:Response,next:NextFunction)=>{
+try {
+
+  const {leadid}= req.params
+  const user = req.user;
+   if (!leadid) {
+      return res.status(400).json({
+        success: false,
+        message: "Lead id is required",
+      });
+    }
+  const lead = await ClientLead.findOne({_id:leadid,client:user._id}).lean();
+  
+   if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+ const filteredLead: Record<string, any> = {};
+
+    Object.entries(lead).forEach(([key, value]) => {
+      if (value === "") return;
+      if (value === null) return;
+      if (value === undefined) return;
+      if (Array.isArray(value) && value.length === 0) return;
+
+      filteredLead[key] = value;
+    });
+      return res.status(200).json({
+      success: true,
+      message: "Lead fetched successfully",
+      lead:filteredLead,
+    });
+} catch (error) {
+  next(error)
+}
+}
