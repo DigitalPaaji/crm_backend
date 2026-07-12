@@ -8,6 +8,8 @@ export interface IClient extends Document {
   logo: string;
   validity: Date;
   active: boolean;
+  website:boolean;
+  subUserCount:Number;
   lastlogin?: Date;
 }
 
@@ -52,7 +54,14 @@ const ClientSchema = new Schema<IClient>(
       type: Boolean,
       default: true,
     },
-
+subUserCount:{
+type:Number,
+default:0
+},
+website:{
+  type:Boolean,
+  default:false
+},
     lastlogin: {
       type: Date,
       default: null,

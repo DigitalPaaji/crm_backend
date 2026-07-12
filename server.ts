@@ -15,6 +15,8 @@ import meetRoute from "./routes/meetingRoutes"
 import ShearRoute from "./routes/ShearRoutes"
 import OnBoarding from "./routes/onBoarding"
 import ClientsRoute from "./routes/Client/AuthRoute"
+import SubClientRoute from "./routes/Client/SubClient"
+
 import LeadsRouteClient from "./routes/Client/clientLeadsRoutes"
 
 
@@ -61,6 +63,9 @@ app.use("/api/v1/onboarding",OnBoarding)
 ///client////
 app.use("/api/v1/client",ClientsRoute)
 app.use("/api/v1/leadclient",LeadsRouteClient)
+app.use("/api/v1/subclient",SubClientRoute)
+
+
 
 
 app.use(errorHandler); 

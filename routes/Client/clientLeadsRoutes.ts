@@ -1,6 +1,6 @@
 import express from "express";
 import { Clientverify } from "../../middlewere/ClientMiddlewere";
-import { createLead, createOrUpdateClientReqLead, getClientLeadVisibleFields, getLeads, getMyLead, getReq } from "../../controller/Client/LeadControlllerClient";
+import { createLead, createOrUpdateClientReqLead, getClientLeadVisibleFields, getLeads, getLeadsFollowup, getMyLead, getReq, leadFollowUpCreate } from "../../controller/Client/LeadControlllerClient";
 
 const route = express.Router();
 
@@ -13,6 +13,9 @@ route.post("/lead/create",Clientverify,createLead as any)
 route.get("/lead/get",Clientverify,getLeads as any)
 route.get("/lead/get/:leadid",Clientverify,getMyLead as any)
 
+route.get("/followup/get/:leadid",Clientverify,getLeadsFollowup as any)
+
+route.post("/followup/create/:leadid",Clientverify,leadFollowUpCreate as any)
 
 
 

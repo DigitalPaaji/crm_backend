@@ -1,8 +1,9 @@
 
 
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import ClientReqLead from "../../model/ClientRequirments";
 import ClientLead from "../../model/ClientLeadModel";
+import LeadFollowUp from "../../model/ClientFollowUpModel";
 
 const allowedLeadFields = [
   "name",
@@ -411,6 +412,84 @@ try {
       message: "Lead fetched successfully",
       lead:filteredLead,
     });
+} catch (error) {
+  next(error)
+}
+}
+
+
+
+export const leadFollowUpCreate= async(req:IAuth,res:Response,next:NextFunction)=>{
+try {
+  const {leadid}  = req.params;
+  const user = req.user;
+  const { note, nextFollowUp, reminderSent = false } = req.body;
+
+    const followUpDate = new Date(nextFollowUp);
+  if (Number.isNaN(followUpDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid next follow-up date",
+      });
+    }
+
+       const lead = await ClientLead.findOne({
+      _id: leadid,
+      client: user._id,
+      active: true,
+    });
+
+if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+    const followUp = await LeadFollowUp.create({
+      client: user._id,
+      lead: lead._id,
+      note: note?.trim() || "",
+      nextFollowUp: followUpDate,
+      reminderSent: Boolean(reminderSent),
+   
+    });
+
+      if (lead.status === "new") {
+      lead.status = "follow_up";
+     
+    }
+
+if(followUpDate){
+  lead.nextFollowUp= followUpDate
+}
+     await lead.save();
+
+return res.status(201).json({
+      success: true,
+      message: "Lead follow-up created successfully",
+      followUp,
+    });
+
+} catch (error) {
+  next(error)
+}
+}
+
+export const getLeadsFollowup = async(req:IAuth,res:Response,next:NextFunction)=>{
+try {
+  
+  const {leadid} = req.params
+  const user = req.user;
+
+  const leads = await LeadFollowUp.find({client:user._id,lead:leadid});
+
+  return res.status(200).json({
+    success:true,
+    followUps:leads
+  })
+
+
 } catch (error) {
   next(error)
 }

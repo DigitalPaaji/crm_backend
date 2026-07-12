@@ -14,7 +14,7 @@ export interface IClientLead extends Document {
   gender?: "male" | "female" | "other" | "";
   age?: number;
   dob?: Date;
-
+nextFollowUp?:Date;
   // Company details
   companyName?: string;
   designation?: string;
@@ -104,6 +104,10 @@ const ClientLeadSchema = new Schema<IClientLead>(
       default: "",
     },
 
+      nextFollowUp: {
+      type: Date,
+      
+    },
     lastName: {
       type: String,
       trim: true,
