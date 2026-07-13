@@ -93,6 +93,9 @@ export const createOrUpdateClientReqLead = async (
         if (typeof value.required === "boolean") {
           updateData[`${field}.required`] = value.required;
         }
+         if (typeof value.required === "boolean") {
+          updateData[`${field}.uniqued`] = value.uniqued;
+        }
       }
     });
 
@@ -221,9 +224,7 @@ const isEmptyValue = (value: unknown): boolean => {
 
 
 
-export const createLead= async(  req: IAuth,
-  res: Response,
-  next: NextFunction)=>{
+export const createLead= async(  req: IAuth,res: Response,next: NextFunction)=>{
   try {
        const user = req.user
 
@@ -241,6 +242,9 @@ const clientId = user._id;
       active: true,
     }).lean();
 
+
+
+
  if (!leadConfiguration) {
       return res.status(404).json({
         success: false,
@@ -251,7 +255,7 @@ const clientId = user._id;
 
     const leadData: Partial<Record<allowedLeadFields, unknown>> = {};
     const missingFields: allowedLeadFields[] = [];
-
+    const uniqueFields: allowedLeadFields[] = [];
 
   for (const fieldKey of allowedLeadFields) {
       const fieldConfiguration = leadConfiguration[fieldKey];
@@ -268,9 +272,18 @@ const clientId = user._id;
       }
 
       if (!isEmptyValue(value)) {
-        leadData[fieldKey] =
-          typeof value === "string" ? value.trim() : value;
+         const cleanValue =
+          typeof value === "string"
+            ? value.trim()
+            : value;
+         leadData[fieldKey] = cleanValue;
+
+        if (fieldConfiguration.uniqued) {
+          uniqueFields.push(fieldKey);
+        }
       }
+
+
     }
  if (missingFields.length > 0) {
       return res.status(400).json({
@@ -279,7 +292,49 @@ const clientId = user._id;
         missingFields,
       });
     }
+ const uniqueChecks = await Promise.all(
+      uniqueFields.map(async (fieldKey) => {
+        const value = leadData[fieldKey];
 
+        const existingLead = await ClientLead.findOne({
+          client: clientId,
+          [fieldKey]: value,
+        })
+          .collation({
+            locale: "en",
+            strength: 2,
+          })
+          .select(`_id ${fieldKey}`)
+          .lean();
+
+        return {
+          fieldKey,
+          value,
+          exists: Boolean(existingLead),
+          leadId: existingLead?._id,
+        };
+      })
+    );
+
+
+     const duplicateFields = uniqueChecks
+      .filter((item) => item.exists)
+      .map((item) => ({
+        field: item.fieldKey,
+        value: item.value,
+        leadId: item.leadId,
+      }));
+
+    if (duplicateFields.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message:
+          duplicateFields.length === 1
+            ? `Lead already exists with this ${duplicateFields[0].field}`
+            : "Lead already exists with one or more unique fields",
+        duplicateFields,
+      });
+    }
 
  const lead = await ClientLead.create({
       ...leadData,
@@ -300,6 +355,13 @@ const clientId = user._id;
     next(error)
   }
 }
+
+
+
+
+
+
+
 
 export const getLeads = async(req:IAuth,res:Response,next:NextFunction)=>{
   try {

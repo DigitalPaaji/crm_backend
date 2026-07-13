@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 interface ILeadField {
   show: boolean;
   required: boolean;
+  uniqued:boolean;
 }
 
 export interface IClientReqLead extends Document {
@@ -73,6 +74,10 @@ const LeadFieldSchema = new Schema<ILeadField>(
       type: Boolean,
       default: false,
     },
+    uniqued:{
+         type: Boolean,
+      default: false,
+    }
   },
   { _id: false }
 );
