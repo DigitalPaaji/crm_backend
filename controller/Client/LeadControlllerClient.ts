@@ -235,6 +235,7 @@ export const createLead= async(  req: IAuth,res: Response,next: NextFunction)=>{
       });
     }
 const clientId = user._id;
+    const {subclientid} =req.body
 
 
     const leadConfiguration = await ClientReqLead.findOne({
@@ -341,6 +342,7 @@ const clientId = user._id;
       client: clientId,
       createdBy: user._id,
       status: "new",
+      subclient:subclientid || null  ,
       active: true,
     });
 
@@ -425,7 +427,7 @@ export const getLeads = async(req:IAuth,res:Response,next:NextFunction)=>{
     }
 
 
- const leads = await ClientLead.find(query).sort({ createdAt: -1 });
+ const leads = await ClientLead.find(query).populate({path:"subclient"}).sort({ createdAt: -1 });
 
    return res.status(200).json({
       success: true,
@@ -555,4 +557,40 @@ try {
 } catch (error) {
   next(error)
 }
+}
+
+export const deletLead = async(req:IAuth,res:Response,next:NextFunction)=>{
+  try {
+    const {leadid}= req.params;
+    const user =  req.user;
+     if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+    const lead = await ClientLead.findOne({_id:leadid,client:user._id});
+     if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+await Promise.all([
+      LeadFollowUp.deleteMany({
+        client: user._id,
+        lead: lead._id,
+      }),
+      lead.deleteOne(),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Lead and its follow-ups deleted successfully",
+    });
+    
+  } catch (error) {
+    next(error)
+  }
 }

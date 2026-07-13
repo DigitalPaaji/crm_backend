@@ -2,7 +2,7 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IClientLead extends Document {
   client: Types.ObjectId;
-
+subclient:Types.ObjectId | null;
   // Basic details
   name?: string;
   firstName?: string;
@@ -90,7 +90,11 @@ const ClientLeadSchema = new Schema<IClientLead>(
       required: true,
       index: true,
     },
-
+subclient:{
+    type: Schema.Types.ObjectId,
+      ref: "ClientSubUser",
+     default:null,
+},
    
     name: {
       type: String,

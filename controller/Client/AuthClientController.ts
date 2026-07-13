@@ -330,3 +330,37 @@ return res.status(200).json({ success: true, message: "Dashboard details fetched
     next(error)
   }
 }
+export const deleteSubClient = async(req:IAuth,res:Response,next:NextFunction)=>{
+try {
+
+  const {subclientid} = req.params;
+  const user =  req.user;
+  if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized user",
+      });
+    }
+  
+const subClient = await ClientSubUser.findOne({
+      _id: subclientid,
+      client: user._id,
+    });
+    
+     if (!subClient) {
+      return res.status(404).json({
+        success: false,
+        message: "Sub-user not found",
+      });
+    }
+
+    await subClient.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Sub-user deleted successfully",
+    });
+} catch (error) {
+  next(error)
+}
+}
