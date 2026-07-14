@@ -146,6 +146,48 @@ if (validityDate < todayDate) {
 }
 }
 
+export const gotoClient= async(req:Request,res:Response,next:NextFunction)=>{
+ try {
+ const {clientid} = req.params
+
+
+ 
+
+ const client = await Client.findById(clientid)
+
+
+
+ if(!client){
+       return res.status(404).json({
+         success: false,
+         message: "client not found",
+       });
+ }
+
+ 
+
+
+
+
+
+
+ 
+ const token = await JWT.sign({id:client._id},  process.env.JWT_SECRET as string,{
+     expiresIn:"60d"
+ })
+
+
+ return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+    });
+
+} catch (error) {
+  
+    next(error)
+}
+}
 
 interface IAuth extends Request{
   user:any
@@ -362,5 +404,52 @@ const subClient = await ClientSubUser.findOne({
     });
 } catch (error) {
   next(error)
+}
+}
+
+
+export const gotoSubClient= async(req:IAuth,res:Response,next:NextFunction)=>{
+try {
+
+    const user = req.user;
+    const {subcliendid}=req.params
+
+
+    const subUser = await ClientSubUser.findOne({_id:subcliendid,client:user._id}).select("+password")
+    if(!subUser){
+return res.status(401).json({ success: false, message: "Invalid email or password", });
+    }
+
+
+
+const client = await Client.findOne({ _id: subUser.client, active: true, }).select( "ownername agencyname email logo validity active website" );
+
+
+
+if(!client  ){
+   return res.status(403).json({ success: false, message: "The main client account is inactive or unavailable", });
+}
+
+
+ const token = await JWT.sign({id:client._id},  process.env.JWT_SECRET as string,{
+     expiresIn:"60d"
+ })
+subUser.lastLogin= new Date(Date.now())
+await subUser.save()
+ 
+
+ return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      
+      token,
+     user: { _id: subUser._id, client: client._id, name: subUser.name, email: subUser.email, access: subUser.access, status: subUser.status, lastLogin: subUser.lastLogin, role: "sub_user", }, 
+     client: { _id: client._id, ownername: client.ownername, agencyname: client.agencyname, email: client.email, logo: client.logo, validity: client.validity, active: client.active, website: client.website, },
+    });
+
+
+    
+} catch (error) {
+    next(error)
 }
 }
