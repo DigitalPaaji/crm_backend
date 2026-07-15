@@ -594,3 +594,42 @@ await Promise.all([
     next(error)
   }
 }
+
+export const getTodayFollowUp = async(req:IAuth,res:Response,next:NextFunction)=>{
+  try {
+        const user =  req.user;
+
+  const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+const leads = await ClientLead.find({
+      client: user._id,
+      nextFollowUp: {
+        $gte: startOfToday,
+        $lte: endOfToday,
+      },
+    })
+      .populate({
+        path: "subclient",
+        select: "name email",
+      })
+      .sort({
+        nextFollowUp: 1,
+      })
+      .lean();
+
+       return res.status(200).json({
+      success: true,
+      message: "Today's follow-ups fetched successfully",
+      count: leads.length,
+      leads,
+    });
+
+    
+  } catch (error) {
+    next(error)
+  }
+}
