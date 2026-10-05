@@ -16,7 +16,7 @@ export const createLead=async(req:Authuser,res:Response,next:NextFunction)=>{
 try {
 const user = req.user
 
-const  {name,email,phone,dob,mother,father,address,designation,education,source,notes} = req.body
+const  {name,leadfor,email,phone,dob,mother,father,address,designation,education,source,notes} = req.body
 
 const allReadyLead = await Lead.findOne({name,email,phone})
 
@@ -27,7 +27,7 @@ if(allReadyLead){
   })
 }
 
- await Lead.create({name,email,phone,dob,mother,father,address,designation,education,source,notes,createdby:user._id})
+ await Lead.create({leadfor,name,email,phone,dob,mother,father,address,designation,education,source,notes,createdby:user._id})
 
 
 
@@ -58,7 +58,7 @@ try {
 
   const leads = await Lead.find({notdeleted:true})
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status source createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status leadfor createdby").populate("createdby");
 
    return res.status(200).json({
       success: true,
@@ -87,7 +87,7 @@ try {
 
   const leads = await Lead.find({createdby:user._id,notdeleted:true})
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status source createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status leadfor createdby").populate("createdby");
 
    return res.status(200).json({
       success: true,
@@ -230,12 +230,11 @@ if (lead.followup.length) {
   }
 }
 
-// lead.followup.push({
-//   date,
-//   by:user._id,
-//   note,
+const todayData = new Date(date);
 
-// })
+lead.followup.push({date:todayData,by:user?._id,note,status:"new"})
+
+
 
 const latestFollowup = lead.followup[lead.followup.length - 1];
 

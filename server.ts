@@ -60,7 +60,7 @@ app.use("/api/v1/shear",ShearRoute)
 
 app.use("/api/v1/onboarding",OnBoarding)
 
-///client////
+///client   ////
 app.use("/api/v1/client",ClientsRoute)
 app.use("/api/v1/leadclient",LeadsRouteClient)
 app.use("/api/v1/subclient",SubClientRoute)
@@ -68,13 +68,13 @@ app.use("/api/v1/subclient",SubClientRoute)
 
 
 
-app.use(errorHandler); 
-const io = new Server(server, {
+  app.use(errorHandler); 
+  const io = new Server(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
   },
-});
+   });
 
 
 

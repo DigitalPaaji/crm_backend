@@ -37,6 +37,7 @@ export interface ILead extends Document {
   education?: "school" | "college" |"graduate" | "postgraduate" | "other" |null;
   status: "new" | "contacted" | "interested" | "converted" | "rejected";
   source?: string;
+  leadfor:string;
   followup: IFollowup[];
   notes?: string;
   createdby: Types.ObjectId;
@@ -112,6 +113,7 @@ const LeadsSchema = new Schema<ILead>(
     },
 
     source: { type: String, default: "manual" },
+    leadfor: { type: String, default: "website" },
 
     followup: { type: [FollowupSchema], default: [] },
 
@@ -129,6 +131,9 @@ nextFollowup:{
       type:String,
       default :""
     },
+
+
+    
   note: { type: String, maxlength: 1000 },
   status:{
       type: String,
