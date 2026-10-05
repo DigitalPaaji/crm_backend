@@ -172,6 +172,7 @@ export const updateLeads = async(req:Authuser,res:Response,next:NextFunction)=>{
       source,
       followup,
       notes,
+      leadfor
     } = req.body;
 lead.email= email
 lead.name= name
@@ -184,6 +185,7 @@ lead.designation= designation
 lead.education= education ? education :null
 lead.status= status
 lead.source= source
+lead.leadfor= leadfor
 lead.followup= followup
 lead.notes= notes
 await  lead.save()
