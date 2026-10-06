@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import ClientOnboarding from "../model/ClientOnboardingSchema";
+import Lead from "../model/leadsModels";
 
 
 export const createClientOnboarding = async (
@@ -21,9 +22,7 @@ export const createClientOnboarding = async (
       ownerAgeRange,
       gender,
       customersLocation,
-      incomeLevel,
-      customersProblem,
-      customersValues,
+      
 
       brandPersonality,
       brandColors,
@@ -34,7 +33,7 @@ export const createClientOnboarding = async (
       platforms,
       handles,
       followers,
-      postFrequency,
+      
       whatWorked,
       paidAdsBefore,
 
@@ -63,6 +62,14 @@ export const createClientOnboarding = async (
       approval,
       digitalMarketingKnowledge,
       anythingElse,
+
+
+      incomeLevel,
+      customersProblem,
+      customersValues,
+
+
+      postFrequency,
     } = req.body;
 
     const requiredFields = [
@@ -102,6 +109,9 @@ export const createClientOnboarding = async (
         message: "Please enter a valid email address.",
       });
     }
+
+
+
 
     const onboarding = await ClientOnboarding.create({
       businessName: String(businessName).trim(),
@@ -179,6 +189,13 @@ export const createClientOnboarding = async (
       digitalMarketingKnowledge: digitalMarketingKnowledge || "",
       anythingElse: anythingElse || "",
     });
+
+
+
+    await Lead.create({
+      leadfor:"",name:ownerName,email:normalizedEmail,phone,designation:"",source:"OnBoarding",notes:primaryGoal
+    })
+
 
     return res.status(201).json({
       success: true,

@@ -58,7 +58,7 @@ try {
 
   const leads = await Lead.find({notdeleted:true})
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status leadfor createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status leadfor source  createdby").populate("createdby");
 
    return res.status(200).json({
       success: true,
@@ -205,7 +205,7 @@ export const Followdup = async(req:Authuser,res:Response,next:NextFunction)=>{
 try {
   const leadid = req.params.id
   const user = req.user
-  const {date,note} = req.body
+  const {date,note,followUpcommingDate} = req.body
 
   const lead = await Lead.findById(leadid);
   
@@ -236,7 +236,7 @@ const todayData = new Date(date);
 
 lead.followup.push({date:todayData,by:user?._id,note,status:"new"})
 
-
+  //  nextFollowup
 
 const latestFollowup = lead.followup[lead.followup.length - 1];
 
@@ -245,6 +245,12 @@ lead.lastFollowup = {
   followupid: latestFollowup._id,
 };
 
+if(followUpcommingDate){
+  lead.nextFollowup={
+  date: new Date(followUpcommingDate),
+  followupid: latestFollowup._id,
+}
+}
 
 
 
@@ -269,6 +275,8 @@ await lead.save();
       message: "Followup added successfully",
       data: lead,
     });
+
+
 } catch (error) {
      next(error);
 }
@@ -487,17 +495,17 @@ export const getLastFolowUps = async (
   try {
     const user = req.user
     const page = Number(req.query.page) || 1;
-    const followupdata = Number(req.query.followupdata) || 3;
+    // const followupdata = Number(req.query.followupdata) || 3;
 
     const limit = 20;
     const skip = (page - 1) * limit;
 
     const filterDate = new Date();
-    filterDate.setDate(filterDate.getDate() - followupdata);
+    // filterDate.setDate(filterDate.getDate() - followupdata);
 
     const query = {
        createdby: user._id,
-      "lastFollowup.date": {
+      "nextFollowup.date": {
         $lte: filterDate,
       },
     };
@@ -514,10 +522,10 @@ export const getLastFolowUps = async (
 
     const leads = await Lead.find(query)
       .select(
-        "name email phone dob status source createdby lastFollowup"
+        "name email phone leadfor status nextFollowup createdby lastFollowup"
       )
       .populate("createdby")
-      .sort({ "lastFollowup.date": 1 })
+      .sort({ "nextFollowup.date": 1 })
       .skip(skip)
       .limit(limit);
 

@@ -14,8 +14,8 @@ interface ILastFollowup {
 interface INextFollowup {
   date?: Date;
   followupid?: String | "";
-  note:string,
-  status:"new" | "contacted" | "interested" | "converted" | "rejected"
+  // note:string,
+  // status:"new" | "contacted" | "interested" | "converted" | "rejected"
 
 }
 
@@ -87,7 +87,7 @@ const LeadsSchema = new Schema<ILead>(
       type: String,
     
       trim: true,
-      // match: [/^[6-9]\d{9}$/, "Invalid Indian phone number"],
+
     },
 
     dob: { type: Date },
@@ -134,12 +134,7 @@ nextFollowup:{
 
 
     
-  note: { type: String, maxlength: 1000 },
-  status:{
-      type: String,
-      enum: ["new", "contacted", "interested", "converted", "rejected"],
-      default: "new",
-    },
+ 
 
   },
 
