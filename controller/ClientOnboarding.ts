@@ -192,10 +192,7 @@ export const createClientOnboarding = async (
 
 
 
-    await Lead.create({
-      leadfor:"",name:ownerName,email:normalizedEmail,phone,designation:"",source:"OnBoarding",notes:primaryGoal
-    })
-
+   
 
     return res.status(201).json({
       success: true,
@@ -248,3 +245,32 @@ export const GetClientBoardSingle = async (
     next(error);
   }
 };
+
+
+interface Authuser extends Request{
+    user : any
+}
+export const convertToLead = async( req: Authuser,res: Response,next: NextFunction)=>{
+  try {
+     const user = req.user;
+      const {id} = req.params
+
+    const client = await ClientOnboarding.findById(id)
+    if(!client){
+      return res.status(401).json({success:false,message:"Client not found"})
+    }
+      
+    const lead = await Lead.create({
+     name:client.ownerName,email:client.email,phone:client.phone,source:"onboard",createdby:user._id,
+     notes:client.customersProblem,leadfor:client.primaryGoal,leadOnboard:client._id
+    })
+      
+client.converted=true
+ await client.save()
+
+    
+return res.status(200).json({success:true,message:"Add SuccessFully"})
+  } catch (error) {
+    next(error)
+  }
+}

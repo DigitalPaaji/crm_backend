@@ -4,7 +4,7 @@ const ClientOnboardingSchema = new Schema(
   {
     // Required fields
     businessName: {
-      type: String,
+      type: String, 
       required: [true, "Business name is required"],
       trim: true,
     },
@@ -242,6 +242,10 @@ const ClientOnboardingSchema = new Schema(
       type: String,
       default: "",
     },
+    converted:{
+      type:Boolean,
+      default:false
+    }
   },
   {
     timestamps: true,

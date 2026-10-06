@@ -42,6 +42,7 @@ export interface ILead extends Document {
   notes?: string;
   createdby: Types.ObjectId;
   notdeleted:Boolean;
+  leadOnboard:Types.ObjectId
   createdAt: Date;
   updatedAt: Date;
   lastFollowup:ILastFollowup;
@@ -143,6 +144,10 @@ nextFollowup:{
 notdeleted:{
     type:Boolean,
     default:true
+},
+
+leadOnboard:{
+  type:Schema.Types.ObjectId, ref: "ClientOnboarding"
 }
 
   },
