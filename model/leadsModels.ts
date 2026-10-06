@@ -147,7 +147,8 @@ notdeleted:{
 },
 
 leadOnboard:{
-  type:Schema.Types.ObjectId, ref: "ClientOnboarding"
+  type:Schema.Types.ObjectId, ref: "ClientOnboarding",
+   default: null,
 }
 
   },

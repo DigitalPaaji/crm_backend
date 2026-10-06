@@ -246,6 +246,38 @@ export const GetClientBoardSingle = async (
   }
 };
 
+export const DeleteClient = async(req: Request,res: Response,next: NextFunction)=>{
+  try {
+    
+    const clientid = req.params.id;
+
+    const client = await ClientOnboarding.findById(clientid);
+   if(!client){
+    return res.status(404).json({
+      success:false,message:"Client not Found"
+    })}
+   
+     if(client.converted){
+  await Lead.findOneAndUpdate(
+    { leadOnboard: client._id },
+    { $set: { leadOnboard: null } }
+  );
+ }
+
+
+ await client.deleteOne()
+
+
+
+
+return res.status(200).json({success:true,message:"Client Deleted"})
+
+
+
+  } catch (error) {
+    next(error)
+  }
+}
 
 interface Authuser extends Request{
     user : any
