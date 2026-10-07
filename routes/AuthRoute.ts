@@ -3,6 +3,8 @@ import { accessChange, changePassword, CreateAdmin, createEmp, EditProfile, empl
 import { VerifyAuth } from "../middlewere/getAuth";
 import { verifyAdmin } from "../middlewere/AdminMiddlewere";
 import { verifyAccess } from "../middlewere/verifyAccess";
+import { getDashboard } from "../controller/AgencyController/LeadsController";
+import { verifyAgency } from "../middlewere/AgencyMiddlewere";
 
 const route = express.Router();
 
@@ -12,7 +14,7 @@ route.post("/admin/create",CreateAdmin)
 route.post("/admin/login",LoginAdmin)
 route.post("/emp/login",LoginEmp)
 route.post("/agency/login",LoginAgency)
-
+route.get("/dashboard",verifyAgency,getDashboard as any)
  
 route.post("/emp/create",verifyAccess,createEmp)
 route.get("/emp/getall",verifyAccess,getAllEMp)

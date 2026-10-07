@@ -8,6 +8,8 @@ const route = express.Router();
 route.post("/create",verifyAdmin,UploadLogo.single("logo"),createClient)
 route.post("/login",loginClient)
 route.get("/verifyclient",Clientverify,getClient as any)
+
+
 route.get("/goclient/:clientid",verifyAdmin,gotoClient)
 route.get("/getall",verifyAdmin,getClients)
  route.patch("/update/:clientid",verifyAdmin,updateClientById)

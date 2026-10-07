@@ -7,7 +7,10 @@ import JWT from "jsonwebtoken"
 import ClientSubUser from "../../model/SubClientModel";
 import ClientLead from "../../model/ClientLeadModel";
 import LeadFollowUp from "../../model/ClientFollowUpModel";
-
+import ClientReqLead from "../../model/ClientRequirments";
+import Lead from "../../model/leadsModels";
+import { Todo } from "../../model/todoModel";
+import mongoose from "mongoose";
 
 export const createClient= async(req:Request,res:Response,next:NextFunction)=>{
 try {
@@ -202,6 +205,11 @@ return res.status(200).json({
 })
 
 }
+
+
+
+
+
 
 
 export const updateClientById = async (

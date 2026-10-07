@@ -3,6 +3,8 @@ import Lead from "../../model/leadsModels";
 import XLSX from "xlsx"
 import fs from "fs";
 import path from "path";
+import mongoose from "mongoose";
+import { Todo } from "../../model/todoModel";
 
 
 
@@ -502,11 +504,13 @@ export const getLastFolowUps = async (
 
     const filterDate = new Date();
     // filterDate.setDate(filterDate.getDate() - followupdata);
+      filterDate.setDate(filterDate.getDate() - 1)
+
 
     const query = {
        createdby: user._id,
       "nextFollowup.date": {
-        $lte: filterDate,
+        $gte: filterDate,
       },
     };
 // query.createdby = user._id
@@ -602,3 +606,260 @@ fs.unlinkSync(fullPath);
 
 
 
+
+export const getDashboard = async (
+  req: Authuser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (!user?._id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const userId = new mongoose.Types.ObjectId(user._id);
+
+  
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+
+
+    const [
+      totalLeads,
+      leadsByStatus,
+      leadsBySource,
+      leadsByLeadFor,
+      monthlyLeads,
+
+    
+
+      todayFollowups,
+      overdueFollowups,
+      upcomingFollowups,
+
+      // =========================
+      // TODOS
+      // =========================
+
+      totalTasks,
+      tasksByStatus,
+      tasksByPriority,
+    ] = await Promise.all([
+
+      // Total Leads
+      Lead.countDocuments({
+        createdby: userId,
+        notdeleted: true,
+      }),
+
+      // Leads by Status
+      Lead.aggregate([
+        {
+          $match: {
+            createdby: userId,
+            notdeleted: true,
+          },
+        },
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+      ]),
+
+      // Leads by Source
+      Lead.aggregate([
+        {
+          $match: {
+            createdby: userId,
+            notdeleted: true,
+          },
+        },
+        {
+          $group: {
+            _id: "$source",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+      ]),
+
+      // Leads by Lead For
+      Lead.aggregate([
+        {
+          $match: {
+            createdby: userId,
+            notdeleted: true,
+          },
+        },
+        {
+          $group: {
+            _id: "$leadfor",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+      ]),
+
+      // Monthly Leads - Last 12 Months
+      Lead.aggregate([
+        {
+          $match: {
+            createdby: userId,
+            notdeleted: true,
+            createdAt: {
+              $gte: new Date(
+                new Date().getFullYear() - 1,
+                new Date().getMonth(),
+                1
+              ),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+          },
+        },
+      ]),
+
+      // Today's Followups
+      Lead.countDocuments({
+        createdby: userId,
+        notdeleted: true,
+        "nextFollowup.date": {
+          $gte: startOfToday,
+          $lte: endOfToday,
+        },
+      }),
+
+      // Overdue Followups
+      Lead.countDocuments({
+        createdby: userId,
+        notdeleted: true,
+        "nextFollowup.date": {
+          $lt: startOfToday,
+        },
+      }),
+
+      // Upcoming Followups
+      Lead.countDocuments({
+        createdby: userId,
+        notdeleted: true,
+        "nextFollowup.date": {
+          $gt: endOfToday,
+        },
+      }),
+
+      // Total Tasks
+      Todo.countDocuments({
+        user: userId,
+      }),
+
+      // Tasks by Status
+      Todo.aggregate([
+        {
+          $match: {
+            user: userId,
+          },
+        },
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+
+      // Tasks by Priority
+      Todo.aggregate([
+        {
+          $match: {
+            user: userId,
+          },
+        },
+        {
+          $group: {
+            _id: "$priority",
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+
+      data: {
+        // =========================
+        // SUMMARY
+        // =========================
+
+        summary: {
+          totalLeads,
+
+          totalTasks,
+
+          todayFollowups,
+
+          overdueFollowups,
+
+          upcomingFollowups,
+
+          convertedLeads:
+            leadsByStatus.find((item) => item._id === "converted")?.count || 0,
+
+          interestedLeads:
+            leadsByStatus.find((item) => item._id === "interested")?.count || 0,
+        },
+
+        // =========================
+        // CHART DATA
+        // =========================
+
+        charts: {
+          leadsByStatus,
+
+          leadsBySource,
+
+          leadsByLeadFor,
+
+          monthlyLeads,
+
+          tasksByStatus,
+
+          tasksByPriority,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
