@@ -6,7 +6,7 @@ import path from "path";
 import mongoose from "mongoose";
 import { Todo } from "../../model/todoModel";
 import { sendWelcomeMail } from "../../helper/sendWelcomMail";
-import { sendLeadMail } from "../../helper/LeadsendMAil";
+import { sendLeadMail } from "../../helper/LeadsendMail";
 
 
 
