@@ -5,6 +5,8 @@ import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
 import { Todo } from "../../model/todoModel";
+import { sendWelcomeMail } from "../../helper/sendWelcomMail";
+import { sendLeadMail } from "../../helper/LeadsendMAil";
 
 
 
@@ -23,15 +25,16 @@ const  {name,leadfor,email,phone,dob,mother,father,address,designation,education
 const allReadyLead = await Lead.findOne({name,email,phone})
 
 if(allReadyLead){
-  return res.json(301).json({
-    success:false,
+  return res.status(409).json({
+    success:false, 
     message:"lead Allready exist"
   })
-}
+} 
+
 
  await Lead.create({leadfor,name,email,phone,dob,mother,father,address,designation,education,source,notes,createdby:user._id})
 
-
+  await sendWelcomeMail(name,email)
 
 
   return res.status(201).json({
@@ -271,6 +274,8 @@ await lead.save();
     select: "name email phone",
       },
     ]);
+
+    await sendLeadMail(user.email,date,note,followUpcommingDate,lead)
 
     return res.status(200).json({
       success: true,
