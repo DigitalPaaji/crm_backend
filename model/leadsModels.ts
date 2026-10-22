@@ -20,16 +20,11 @@ interface INextFollowup {
 }
 
 
-
-
-
 export interface ILead extends Document {
   name?: string;
   email?: string;
   phone: string;
-
   dob?: Date;
-
   mother?: string;
   father?: string;
   address?: string;
@@ -46,12 +41,8 @@ export interface ILead extends Document {
   createdAt: Date;
   updatedAt: Date;
   lastFollowup:ILastFollowup;
-  nextFollowup:INextFollowup;
-   
+  nextFollowup:INextFollowup;   
 }
-
-
-
 
 const FollowupSchema = new Schema<IFollowup>(
   {
@@ -76,19 +67,15 @@ const FollowupSchema = new Schema<IFollowup>(
 const LeadsSchema = new Schema<ILead>(
   {
     name: { type: String, trim: true,  maxlength: 100 },
-
     email: {
       type: String,
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
     },
-
     phone: {
       type: String,
-    
       trim: true,
-
     },
 
     dob: { type: Date },
@@ -103,9 +90,7 @@ const LeadsSchema = new Schema<ILead>(
     education: { type: String,
       enum: ["school", "college", "graduate", "postgraduate", "other",null],
       default:null
-    }
-      
-      ,
+    },
 
     status: {
       type: String,
@@ -141,6 +126,8 @@ nextFollowup:{
 
     notes: { type: String, maxlength: 1000 },
     createdby:{ type: Schema.Types.ObjectId, ref: "employee", required: true },
+
+
 notdeleted:{
     type:Boolean,
     default:true

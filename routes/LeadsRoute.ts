@@ -18,13 +18,16 @@ route.put("/delete-followup/:id",verifyAgency,deleteFollowup as any)
 route.delete("/temp-delete/:id",verifyAgency,tempDelete as any)
 
 // admin
+
 route.get("/admin/get-all-leads",verifyAdmin,getallLeadsAdmin as any)
 route.get("/admin/get-lead/:leadid",verifyAdmin,getSingleLead as any)
 route.put("/admin/update-lead/:id",verifyAdmin,updateLeads as any)
 route.delete("/admin/delete/:id",verifyAdmin,DeleteLead as any)
-
-
-
+route.post("/admin/create",verifyAdmin,createLead as any)
+route.post("/admin/create/xl",verifyAdmin,uploadxl.single("file"),UploadXlFile as any)
+route.get("/admin/get-leads-by-date",verifyAdmin,getLastFolowUps as any)
+route.put("/admin/update-followup/:id",verifyAdmin,Followdup as any)
+route.put("/admin/delete-followup/:id",verifyAdmin,deleteFollowup as any)
 //webhook
 
 

@@ -9,13 +9,10 @@ import { sendWelcomeMail } from "../../helper/sendWelcomMail";
 import { sendLeadMail } from "../../helper/LeadsendMail";
 
 
-
 interface Authuser extends Request{
     user : any
 }
-
-
-
+ 
 export const createLead=async(req:Authuser,res:Response,next:NextFunction)=>{
 try {
 const user = req.user
@@ -49,7 +46,6 @@ if(allReadyLead){
 }
 }
 
- 
 export const getallLeads=async(req:Authuser,res:Response,next:NextFunction)=>{
 try {
     const user = req.user;
@@ -107,8 +103,6 @@ try {
     
 }
 
-
-
 export const getSingleLead = async(req:Authuser,res:Response,next:NextFunction)=>{
     try {
         const {leadid} = req.params;
@@ -139,8 +133,6 @@ export const getSingleLead = async(req:Authuser,res:Response,next:NextFunction)=
         next(error)
     }
 }
-
-
 
 export const updateLeads = async(req:Authuser,res:Response,next:NextFunction)=>{
   try {
@@ -289,9 +281,6 @@ await lead.save();
 }
 }
 
-
-
-
 export const deleteFollowup = async (
   req: Authuser,
   res: Response,
@@ -325,15 +314,15 @@ export const deleteFollowup = async (
     }
 
     // Permission check
-    if (
-      followupLead.by.toString() !==
-      user._id.toString()
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "You can delete only your followup",
-      });
-    }
+    // if (
+    //   followupLead.by.toString() !==
+    //   user._id.toString()
+    // ) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "You can delete only your followup",
+    //   });
+    // }
 
     // Delete followup
     lead.followup = lead.followup.filter(
@@ -500,7 +489,8 @@ export const getLastFolowUps = async (
   next: NextFunction
 ) => {
   try {
-    const user = req.user
+   
+
     const page = Number(req.query.page) || 1;
     // const followupdata = Number(req.query.followupdata) || 3;
 
@@ -510,22 +500,23 @@ export const getLastFolowUps = async (
     const filterDate = new Date();
     // filterDate.setDate(filterDate.getDate() - followupdata);
       filterDate.setDate(filterDate.getDate() - 1)
-
+      //  createdby: user._id,
 
     const query = {
-       createdby: user._id,
       "nextFollowup.date": {
         $gte: filterDate,
       },
     };
 // query.createdby = user._id
 // filterDate.setMinutes(filterDate.getMinutes() - followupdata);
-
 // const query = {
 //   "lastFollowup.date": {
 //     $lte: filterDate,
 //   },
 // };
+
+
+
 
     const totalLeads = await Lead.countDocuments(query);
 
