@@ -429,7 +429,7 @@ try {
 
   const leads = await Lead.find()
       .skip(skip)
-      .limit(limit).sort({ createdAt: -1 }).select("name email phone dob status source createdby").populate("createdby");
+      .limit(limit).sort({ createdAt: -1 }).select("name createdAt email phone dob status leadfor source  createdby").populate("createdby")
 
    return res.status(200).json({
       success: true,
